@@ -1,8 +1,11 @@
 <script setup>
-import { ref } from 'vue';
-import { formatarRG, formatarCPF} from '../utils/api';
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { formatarCPF, formatarRG, baseURL } from '../utils/api'
 
-
+const route = useRoute()
+const router = useRouter()
+const id_pessoa = route.params.id
 
 const formData = ref({
   nome: '',
@@ -13,58 +16,48 @@ const formData = ref({
   funcao: ''
 })
 
-const limparCampos = () => {
-  formData.value.nome = ''
-  formData.value.rg = ''
-  formData.value.cpf = ''
-  formData.value.data_nascimento = ''
-  formData.value.data_admissao = ''
-  formData.value.funcao = ''
-}
-
 const submitForm = async () => {
   try {
-    const dataToSend = {
-      ...formData,
-      rg: formatarRG(formData.value.rg),
-      cpf: formatarCPF(formData.value.cpf)
-    };
-
-    const response = await fetch('https://visiechallenge-b51dd6dl.b4a.run/api/pessoas/', {
-      method: 'POST',
+    const response = await fetch(`${baseURL}${id_pessoa}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(formData.value)
-      
     })
 
     console.log(JSON.stringify(formData.value))
 
     if (response.ok) {
-      alert('Registro cadastrado com sucesso.')
-      limparCampos()
+      alert('Registro atualizado com sucesso.')
+      router.push(`/details/${id_pessoa}`)
     } else {
-      alert('Falha ao cadastrar registro.')
+      alert('Falha ao atualizar o registro.', response)
+      console.log(JSON.stringify(formData))
     }
   } catch (error) {
-    alert('Erro ao enviar os dados:', error)
+    console.error('Erro ao enviar os dados:', error)
   }
 }
 
-const atualizarRG = (valor) => {
-    formData.value.rg = valor.replace(/[^\d]/g, '')
+onMounted(async () => {
+  try {
+    const response = await fetch(`${baseURL}${id_pessoa}`)
+    const data = await response.json()
+    formData.value.nome = data.nome
+    formData.value.rg = data.rg
+    formData.value.cpf = data.cpf
+    formData.value.data_nascimento = data.data_nascimento
+    formData.value.data_admissao = data.data_admissao
+    formData.value.funcao = data.funcao
+  } catch (error) {
+    console.error('Erro ao obter detalhes da pessoa:', error)
   }
-  
- const atualizarCPF = (valor) => {
-    formData.value.cpf = valor.replace(/[^\d]/g, '')
-  }
-
+})
 </script>
-
 <template>
   <div class="container">
-    <h1>Adicionar Registro</h1>
+    <h1>Editar Registro</h1>
     <form @submit.prevent="submitForm" role="form">
       <div class="form-group col-md-12">
         <label for="nome">Nome</label>
@@ -131,19 +124,15 @@ const atualizarRG = (valor) => {
       </div>
       <div class="form-group">
         <label for="funcao">Função</label>
-        <input
-          type="text"
-          class="form-control"
-          id="funcao"
-          v-model="formData.funcao"
-        />
+        <input type="text" class="form-control" id="funcao" v-model="formData.funcao" />
       </div>
       <br />
-      <button type="submit" class="btn btn-primary">Cadastrar</button>
+      <div class="mt-3">
+        <router-link class="btn btn-secondary me-2" to="/">Cancelar</router-link>
+        <button type="submit" class="btn btn-primary">Atualizar</button>
+      </div>
     </form>
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>
