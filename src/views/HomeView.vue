@@ -13,7 +13,7 @@ onMounted(carregarPessoas);
 
 <template>
 <main class="container">
-<Table :pessoas="pessoas" />
+<Table v-if="pessoas" :pessoas="pessoas" />
 </main>
 </template>
 

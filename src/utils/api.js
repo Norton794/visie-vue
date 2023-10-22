@@ -20,7 +20,10 @@ export async function fetchData(id) {
 export async function deleteData(id) {
   try {
     await fetch(`${baseURL}${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
     })
     console.log('Registro excluído com sucesso.')
     return true

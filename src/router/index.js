@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import DetailsView from '../views/DetailsView.vue';
 import EditView from '../views/EditView.vue';
 
 const router = createRouter({
@@ -20,11 +19,12 @@ const router = createRouter({
       component: () => import('../views/CadView.vue')
     },
     {
-      path: '/details/:id', 
-      name: 'Details', 
-      component: DetailsView, 
-      props: true, 
+      path: '/details/:id',
+      name: 'details',
+      component: () => import('../views/DetailsView.vue'),
+      props: true
     },
+    
     {
       path: '/edit/:id',
       name: 'edit',

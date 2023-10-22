@@ -30,7 +30,7 @@ const submitForm = async () => {
 
     if (response.ok) {
       alert('Registro atualizado com sucesso.')
-      router.push(`/details/${id_pessoa}`)
+      router.push(`/`)
     } else {
       alert('Falha ao atualizar o registro.', response)
       console.log(JSON.stringify(formData))

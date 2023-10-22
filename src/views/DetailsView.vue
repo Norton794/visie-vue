@@ -1,46 +1,32 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { fetchData, deleteData, formatarData, formatarCPF, formatarRG } from '../utils/api'
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { deleteData, formatarData, formatarCPF, formatarRG } from '../utils/api';
 
-const route = useRoute()
-const router = useRouter()
-const id = route.params.id
-const pessoa = ref({})
-
-onMounted(async () => {
-  try {
-    const data = await fetchData(id);
-    console.log(data)
-    if (data) {
-      pessoa.value = data;
-      console.log(pessoa.value)
-    } else {
-      console.error('Dados não retornados corretamente da API');
-    }
-  } catch (error) {
-    console.error('Erro ao obter dados da API:', error);
-  }
-});
+const route = useRoute();
+const router = useRouter();
+const id = route.params.id;
+const pessoa = ref(route.query);
 
 
 const editarPessoa = () => {
-  router.push({ name: 'edit', params: { id: pessoa.value.id_pessoa } })
-}
+  router.push({ name: 'edit', params: { id: pessoa.value.id_pessoa } });
+};
 
 const confirmarExclusao = () => {
   if (window.confirm('Tem certeza que deseja excluir esta pessoa?')) {
-    excluirPessoa()
+    excluirPessoa();
   }
-}
+};
 
 const excluirPessoa = async () => {
-  const result = await deleteData(id)
+  const result = await deleteData(id);
   if (result) {
-    router.push('/')
+    router.push('/');
   }
-}
+};
 </script>
+
 <template>
   <div class="container mt-4">
     <div class="card">

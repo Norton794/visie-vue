@@ -3,20 +3,20 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { mostrarPrimeiroNome, formatarData, deleteData } from '../utils/api'
 
+
+
 const router = useRouter()
 
 const props = defineProps(['pessoas'])
 const pessoas = ref(props.pessoas)
-
+console.log('Pessoas:', pessoas.value)
 
 const verMais = (pessoa) => {
-  router.push({
-    name: 'Details',
-    params: { id: pessoa.id_pessoa },
-  })
-}
+  router.push({ name: 'details', params: { id: pessoa.id_pessoa }, query: {...pessoa} });
+};
 
 const editarPessoa = (id) => {
+  console.log('Editar pessoa:', id)
   router.push({ name: 'edit', params: { id } })
 }
 
@@ -29,47 +29,64 @@ const confirmarExclusao = (id) => {
 const excluirPessoa = async (id) => {
   const result = await deleteData(id)
   if (result) {
-    pessoas.value = pessoas.value.filter(p => p.id_pessoa !== id)
-    alert('Pessoa excluída com sucesso!')
+    window.location.reload(true);
   }
 }
-
 </script>
 
 <template>
-    <div class="table-container">
-  <table class="table table-hover" role="table" aria-label="Tabela de Pessoas">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Nome</th>
-        <th scope="col">Data de Admissão</th>
-        <th scope="col">Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="pessoa in pessoas" :key="pessoa.id_pessoa">
-        <th scope="row">{{ pessoa.id_pessoa }}</th>
-        <td>{{ mostrarPrimeiroNome(pessoa.nome) }}</td>
-        <td>{{ formatarData(pessoa.data_admissao) }}</td>
-        <td>
-          <div class="button-container">
-            <button @click="verMais(pessoa)" type="button" class="btn btn-primary btn-sm">
-              Ver Mais
-            </button>
-            <button @click="editarPessoa(pessoa.id_pessoa)" type="button" class="btn btn-warning btn-sm">Editar</button>
-            <button @click="confirmarExclusao(pessoa.id_pessoa)" type="button" class="btn btn-danger btn-sm">Excluir</button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <div class="table-container">
+    <table class="table table-hover" role="table" aria-label="Tabela de Pessoas">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Data de Admissão</th>
+          <th scope="col">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="pessoa in pessoas" :key="pessoa.id_pessoa">
+          <th scope="row">{{ pessoa.id_pessoa }}</th>
+          <td>{{ mostrarPrimeiroNome(pessoa.nome) }}</td>
+          <td>{{ formatarData(pessoa.data_admissao) }}</td>
+          <td>
+            <div class="button-container">
+              <button @click="verMais(pessoa)" type="button" class="btn btn-primary">
+                Ver Mais
+              </button>
+              <button
+                @click="editarPessoa(pessoa.id_pessoa)"
+                type="button"
+                class="btn btn-warning btn-sm"
+              >
+                Editar
+              </button>
+              <button
+                @click="confirmarExclusao(pessoa.id_pessoa)"
+                type="button"
+                class="btn btn-danger btn-sm"
+              >
+                Excluir
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <br />
   <div id="add">
     <router-link type="button" class="btn btn-primary" to="/cad">Adicionar Registro</router-link>
   </div>
   <br /><br />
+
+
+
+ 
+ 
+
+
 </template>
 
 <style>
@@ -98,4 +115,3 @@ const excluirPessoa = async (id) => {
   }
 }
 </style>
-
